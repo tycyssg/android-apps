@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ShoppingList</string>
+    <string name="shopping_list_title">SHOPPING LIST</string>
+    <string name="title_quote">\"You choose, we remember\"</string>
+    <string name="your_username_t">Your username...</string>
+    <string name="password_t">Password...</string>
+</resources>
