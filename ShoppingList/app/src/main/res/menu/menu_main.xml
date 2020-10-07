@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/shopNowid"
+        android:title="View List"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/goCartid"
+        android:title="Go to cart"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/logOutId"
+        android:title="Log Out"
+        app:showAsAction="never"/>
+</menu>

@@ -3,6 +3,7 @@ package com.example.shoppinglist;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
+                errorText.setText("");//Reset the logs
                 final EditText username =  findViewById(R.id.loginUsernameInput);
                 final EditText password =  findViewById(R.id.loginPasswordInput);
                 User user = getUserByUsername(username.getText().toString());
@@ -64,8 +66,9 @@ public class MainActivity extends AppCompatActivity {
                 }else if(!password.getText().toString().equals(user.getPassword())){
                     errorText.setText("Invalid details");
                 }else{
-                    errorText.setText("Login successfully!");
-                    errorText.setTextColor(Color.parseColor("#FF1E8A00"));
+                    Intent intent = new Intent(MainActivity.this,ShoppingListPanel.class);
+                    intent.putExtra("loggedUser",user.getUsername());
+                    startActivity(intent);
                 }
 
             }
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         final EditText username =  findViewById(R.id.registerUsernameInput);
         final EditText password =  findViewById(R.id.registerPasswordInput);
         final EditText repeatPassword =  findViewById(R.id.registerRepeatPasswordInput);
-
+        errorText.setText("");//Reset the logs
         final LinearLayout loginLayout,registerLayout;
 
         loginLayout = findViewById(R.id.loginLayout);
@@ -96,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         registerButton.setOnClickListener(new View.OnClickListener() {
+
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
