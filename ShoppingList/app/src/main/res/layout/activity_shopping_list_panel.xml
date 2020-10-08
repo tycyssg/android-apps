@@ -28,7 +28,6 @@
             android:layout_marginLeft="5dp"
             android:fontFamily="sans-serif-medium"
             android:gravity="center_vertical"
-            android:text="Welcome User"
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             android:textColor="#FFFFFF"
             android:textSize="21sp"

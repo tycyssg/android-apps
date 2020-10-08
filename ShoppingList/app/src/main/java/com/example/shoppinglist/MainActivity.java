@@ -4,7 +4,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,16 +14,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.shoppinglist.models.User;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
+import com.example.shoppinglist.utilities.SharedPrefActions;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private final String userList= "USER_LIST";
+    private SharedPrefActions spa = new SharedPrefActions();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         registerLayout = findViewById(R.id.registerLayout);
         registerButton = findViewById(R.id.registerButton);
         loginButton = findViewById(R.id.loginButton);
+
+
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 errorText.setText("");//Reset the logs
                 final EditText username =  findViewById(R.id.loginUsernameInput);
                 final EditText password =  findViewById(R.id.loginPasswordInput);
-                User user = getUserByUsername(username.getText().toString());
+                User user = spa.getUserByUsername(username.getText().toString(),getApplicationContext());
 
                 if(user == null){
                     errorText.setText("Invalid details");
@@ -106,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 String user = username.getText().toString();
                 if(user.length() < 6){
                     errorText.setText("Username has to be at least 6 characters long");
-                }else if(exitUser(user)){
+                }else if(spa.exitUser(user,getApplicationContext())){
                     errorText.setText("Username already exist!");
                 }else{
                     String pass = password.getText().toString();
@@ -120,10 +118,10 @@ public class MainActivity extends AppCompatActivity {
                         errorText.setText("Password are not match!");
                     }else{
 
-                        List<User> users = loadData();
+                        List<User> users = spa.loadData(getApplicationContext());
                         int beforeInsert = users.size();
                         users.add(new User(user,pass));
-                        save(users);
+                        spa.save(users,getApplicationContext());
                         int after = users.size();
                         if(after > beforeInsert){
                             errorText.setText("Account successfully created!");
@@ -154,42 +152,5 @@ public class MainActivity extends AppCompatActivity {
         repeatPassword.setText("");
     }
 
-    public void save(List<User> users){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
-        String json = gson.toJson(users);
-        editor.putString(userList,json);
-        editor.apply();
-    }
 
-    public List<User> loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared preferences", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = sharedPreferences.getString(userList,null);
-        Type type = new TypeToken<List<User>>(){}.getType();
-        List<User> users = gson.fromJson(json,type);
-        if(users == null){
-            return  new ArrayList<>();
-        }
-        return users;
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public boolean exitUser(String user){
-        List<User> users = loadData();
-        if(users.isEmpty())
-            return false;
-
-        return users.stream().anyMatch(s -> s.getUsername().equals(user));
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public User getUserByUsername(String user){
-        List<User> users = loadData();
-        if(users.isEmpty())
-            return null;
-
-        return users.stream().filter(s -> s.getUsername().equals(user)).findAny().orElse(null);
-    }
 }

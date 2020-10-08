@@ -3,13 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/viewListId"
-        android:title="View List"
+        android:id="@+id/buyMoreId"
+        android:title="Buy More"
         app:showAsAction="never" />
-    <item
-        android:id="@+id/goCartid"
-        android:title="Go to cart"
-        app:showAsAction="never"/>
     <item
         android:id="@+id/logOutId"
         android:title="Log Out"
