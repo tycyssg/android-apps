@@ -13,9 +13,9 @@
         android:id="@+id/textView4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="112dp"
         android:layout_marginTop="48dp"
         android:fontFamily="monospace"
+        android:gravity="center"
         android:text="Checkout Process"
         android:textColor="#FFFFFF"
         android:textSize="26sp" />
@@ -32,20 +32,42 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:fontFamily="monospace"
-            android:text="To Pay:555"
-            android:textColor="#F80000"
-            android:textSize="22sp"
+            android:text="To Pay:"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:autoSizeTextType="uniform" />
+
+        <TextView
+            android:id="@+id/cartBalanceId"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight=".3"
+            android:fontFamily="monospace"
+            android:textColor="#FF0000"
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/textView8"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="right"
+            android:layout_weight=".15"
             android:fontFamily="monospace"
             android:gravity="right"
-            android:text="Items: 99"
+            android:text="Items: "
+            android:textColor="#FFFFFF"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:autoSizeTextType="uniform" />
+
+        <TextView
+            android:id="@+id/cartItemsId"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="right"
+            android:layout_weight=".3"
+            android:fontFamily="monospace"
             android:textColor="#F80000"
             android:textSize="22sp"
             android:textStyle="bold"
@@ -61,12 +83,16 @@
         android:paddingLeft="30dp">
 
         <EditText
-            android:id="@+id/holderCardName"
+            android:id="@+id/cardNumberId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="CARD NUMBER"
-            android:inputType="number" />
+            android:inputType="number"
+            android:textColor="#FDFCFC"
+            android:textColorHighlight="#FD0101"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#FF0303" />
     </LinearLayout>
 
     <LinearLayout
@@ -83,17 +109,24 @@
             android:layout_weight="1"
             android:ems="10"
             android:hint="MM/YY"
-            android:inputType="number" />
+            android:textColor="#FFFFFF"
+            android:textColorHighlight="#FF0000"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#FB0000" />
 
         <EditText
-            android:id="@+id/editTextTextPersonName3"
+            android:id="@+id/ccvId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_weight="1"
             android:ems="10"
+            android:hint="CCV"
             android:inputType="number"
-            android:text="CCV" />
+            android:textColor="#FFFFFF"
+            android:textColorHighlight="#FD0000"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#EA0000" />
     </LinearLayout>
 
     <LinearLayout
@@ -104,17 +137,22 @@
         android:paddingRight="30dp">
 
         <EditText
-            android:id="@+id/cardNumberId"
+            android:id="@+id/cardNameId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="CARD NUMBER"
-            android:inputType="number" />
+            android:hint="CARD NAME"
+            android:inputType="text"
+            android:textColor="#FDFDFD"
+            android:textColorHighlight="#F60000"
+            android:textColorHint="#FFFFFF"
+            android:textColorLink="#F60000" />
 
         <Button
             android:id="@+id/makePaymentId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:background="@android:color/holo_green_dark"
             android:drawableLeft="@android:drawable/ic_media_play"
             android:fontFamily="monospace"

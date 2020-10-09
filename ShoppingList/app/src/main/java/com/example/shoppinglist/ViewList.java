@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -25,6 +27,7 @@ public class ViewList extends AppCompatActivity {
     private String loggedUser;
     private UserListAddapter adapter;
     private ListView listView;
+    private Button checkOutButton;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -38,12 +41,21 @@ public class ViewList extends AppCompatActivity {
     public void run(){
         TextView balanceText = findViewById(R.id.userListBalanceTextId);
         TextView userListText = findViewById(R.id.userListTextId);
+        checkOutButton  = findViewById(R.id.checkOutButtonId);
+
         loggedUser = getIntent().getExtras().getString("loggedUser");
         userListText.setText(loggedUser + " list");
         User u = spa.getUserByUsername(loggedUser,getApplicationContext());
         String currentBalance = spa.calculateTheBalanceOfUserList(u.getUserShoppingList());
         balanceText.setText(currentBalance);
         listSettings(u.getUserShoppingList(), balanceText);
+
+        checkOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToCheckout();
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -100,5 +112,11 @@ public class ViewList extends AppCompatActivity {
 
         spa.save(users,getApplicationContext());
         listView.invalidateViews();
+    }
+
+    public void goToCheckout(){
+        Intent intent = new Intent(ViewList.this,CheckOut.class);
+        intent.putExtra("loggedUser", loggedUser);
+        startActivity(intent);
     }
 }
