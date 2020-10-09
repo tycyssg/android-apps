@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearFields(username,password,repeatPassword);
+                clearFields(username,password,repeatPassword,errorText);
             }
         });
 
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (pass.length() < 6) {
                         errorText.setText("Password has to be at least 6 characters long");
-                    } else if(pass.contains("\\s")){
+                    } else if(pass.matches(".*\\s+.*")){
                         errorText.setText("Password cannot contain space");
                     }else if(!pass.equals(passRepeat)){
                         errorText.setText("Password are not match!");
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                         if(after > beforeInsert){
                             errorText.setText("Account successfully created!");
                             errorText.setTextColor(Color.parseColor("#FF1E8A00"));
-                            clearFields(username,password,repeatPassword);
+                            clearFields(username,password,repeatPassword,errorText);
                         }else{
                             errorText.setText("ERROR! Account not created!");
                         }
@@ -141,15 +141,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 registerLayout.setVisibility(View.GONE);
                 loginLayout.setVisibility(View.VISIBLE);
-                clearFields(username,password,repeatPassword);
+                clearFields(username,password,repeatPassword,errorText);
             }
         });
     }
 
-    public void clearFields(EditText username,EditText password,EditText repeatPassword){
+    public void clearFields(EditText username,EditText password,EditText repeatPassword,TextView errorText){
         username.setText("");
         password.setText("");
         repeatPassword.setText("");
+        errorText.setText("");
     }
 
 
