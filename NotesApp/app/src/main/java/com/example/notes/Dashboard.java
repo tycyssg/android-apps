@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,13 +45,14 @@ import lombok.Data;
 public class Dashboard extends AppCompatActivity {
 
     private static final String TAG = "";
-    FirestoreRecyclerAdapter adapter;
+    private FirestoreRecyclerAdapter adapter;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
     private FloatingActionButton fab;
     private ProgressBar progressBar;
     private RecyclerView displayList;
     private List<Note> noteList;
+    private SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,10 @@ public class Dashboard extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.dashboard_menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.searchIcon);
+        searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint("Search Notes");
+        prepareSearch();
         return true;
     }
 
@@ -92,6 +98,37 @@ public class Dashboard extends AppCompatActivity {
         fab = findViewById(R.id.addNotesId);
         progressBar = findViewById(R.id.progressBarDashboard);
         displayList = findViewById(R.id.notesDisplayList);
+    }
+
+    private void prepareSearch() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                processSearch(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                processSearch(newText);
+                return true;
+            }
+        });
+    }
+
+    private void processSearch(String s) {
+        s = s.toLowerCase();
+        final String userId = firebaseAuth.getCurrentUser().getUid();
+
+        Query query = firebaseFirestore.collection("notes").whereEqualTo("userId", userId).orderBy("searchKey").startAfter(s).endAt(s + "\uf8ff");
+
+        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
+                .setQuery(query, Note.class)
+                .build();
+
+        adapter = firebaseAdapter(options, userId);
+        adapter.startListening();
+        displayList.setAdapter(adapter);
     }
 
     private void logout() {
@@ -179,7 +216,7 @@ public class Dashboard extends AppCompatActivity {
     }
 
     private void getNotesData() {
-        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
         showProgressBar();
         final String userId = firebaseAuth.getCurrentUser().getUid();
         Query query = firebaseFirestore.collection("notes").whereEqualTo("userId", userId);
@@ -189,7 +226,18 @@ public class Dashboard extends AppCompatActivity {
                 .build();
         hideProgressBar();
 
-        adapter = new FirestoreRecyclerAdapter<Note, ListViewHolder>(options) {
+        adapter = firebaseAdapter(options, userId);
+
+        displayList.setHasFixedSize(true);
+        displayList.setLayoutManager(new LinearLayoutManager(this));
+        displayList.setAdapter(adapter);
+
+    }
+
+    private FirestoreRecyclerAdapter<Note, ListViewHolder> firebaseAdapter(FirestoreRecyclerOptions<Note> options, final String userId) {
+
+        final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        return new FirestoreRecyclerAdapter<Note, ListViewHolder>(options) {
             @NonNull
             @Override
             public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -207,11 +255,6 @@ public class Dashboard extends AppCompatActivity {
             }
 
         };
-
-        displayList.setHasFixedSize(true);
-        displayList.setLayoutManager(new LinearLayoutManager(this));
-        displayList.setAdapter(adapter);
-
     }
 
     private void getDataToDeleteNote(String userId, final int somePos) {

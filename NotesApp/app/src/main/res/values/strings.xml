@@ -8,5 +8,6 @@
     <string name="shr_hint_phone">Phone</string>
     <string name="shr_hint_password">Password</string>
     <string name="add_notes">add</string>
+    <string name="action_search">search</string>
 
 </resources>

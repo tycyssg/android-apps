@@ -2,12 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!--    <item-->
-    <!--        android:id="@+id/favorite"-->
-    <!--        android:icon="@drawable/ic_favorite_24dp"-->
-    <!--        android:title="@string/favorite"-->
-    <!--        android:contentDescription="@string/content_description_favorite"-->
-    <!--        app:showAsAction="ifRoom" />-->
+    <item
+        android:id="@+id/searchIcon"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="Search"
+        app:actionViewClass="android.widget.SearchView"
+        app:showAsAction="always" />
+
 
     <item
         android:id="@+id/profileId"

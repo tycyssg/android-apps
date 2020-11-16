@@ -12,10 +12,12 @@ public class Note {
     private String noteBody;
     private Date dateCreated;
     private String userId;
+    private String searchKey;
 
     public Note(String noteTitle, String noteBody) {
         this.noteTitle = noteTitle;
         this.noteBody = noteBody;
         this.dateCreated = new Date();
+        this.searchKey = noteTitle.toLowerCase();
     }
 }

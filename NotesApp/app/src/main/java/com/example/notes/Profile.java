@@ -28,7 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.squareup.picasso.Picasso;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 public class Profile extends AppCompatActivity {
@@ -136,8 +136,10 @@ public class Profile extends AppCompatActivity {
     private void setupProfile(User userProfile) {
         Picasso.get().load(userProfile.getPhotoUrl()).into(profileImage);
         profileTopText.setText(userProfile.getFullName() + " profile");
+
+        final SimpleDateFormat format = new SimpleDateFormat("E:M:y HH:mm:ss");
         long dateCreated = firebaseAuth.getCurrentUser().getMetadata().getLastSignInTimestamp();
-        profileTopTextSecondary.setText("Created: " + new Date(dateCreated).toString());
+        profileTopTextSecondary.setText("Last Sign In: " + format.format(dateCreated));
     }
 
     private void setProfileDataInForms(User userProfile) {
