@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name"></string>
+    <string name="shr_hint_email">Email</string>
+    <string name="shr_hint_photoUrl">Avatar Word (type anything)</string>
+    <string name="shr_hint_fullName">Full Name</string>
+    <string name="shr_hint_phone">Phone</string>
+    <string name="shr_hint_password">Password</string>
+    <string name="add_notes">add</string>
+    <string name="action_search">search</string>
+    <string name="shr_hint_storyTitle">Story Title</string>
+    <string name="shr_hint_storyDescription">Story Description</string>
+    <string name="add_story">Add Story</string>
+    <string name="cancel">Cancel</string>
+    <string name="shr_hint_locationStart">Location Start</string>
+    <string name="shr_hint_locationEnd">Location End</string>
+
+</resources>

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "599959923831",
+    "project_id": "travel-stories-263c9",
+    "storage_bucket": "travel-stories-263c9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599959923831:android:9d88b5093825a6bd68ea72",
+        "android_client_info": {
+          "package_name": "com.example.stories"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599959923831-a1goau4ameq4sst19tmomfgnruvgep73.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.stories",
+            "certificate_hash": "e4890794d7cfc97c2100b8689e566e1bccf45ce4"
+          }
+        },
+        {
+          "client_id": "599959923831-phogjnse44l8ue42ogmbftle171801go.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcQlXaOzdqYKUmVOOR06Lwb2FM4Mwoehg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599959923831-phogjnse44l8ue42ogmbftle171801go.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
