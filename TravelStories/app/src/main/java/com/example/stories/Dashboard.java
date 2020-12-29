@@ -62,6 +62,8 @@ public class Dashboard extends AppCompatActivity {
     private List<Note> noteList;
     private SearchView searchView;
     private EditText noteTitle;
+    private EditText locationStart;
+    private EditText locationEnd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,8 +167,8 @@ public class Dashboard extends AppCompatActivity {
         View dialogView = inflater.inflate(R.layout.custom_dialog, null);
 
         noteTitle = dialogView.findViewById(R.id.storyTitle);
-        final EditText locationStart = dialogView.findViewById(R.id.locationStart);
-        final EditText locationEnd = dialogView.findViewById(R.id.locationEnd);
+        locationStart = dialogView.findViewById(R.id.locationStart);
+        locationEnd = dialogView.findViewById(R.id.locationEnd);
 
         Places.initialize(getApplicationContext(), "AIzaSyCENMd7pHPxl4TgjHIzIkf1pJPJyEOezdo");
         locationStart.setFocusable(false);
@@ -210,7 +212,7 @@ public class Dashboard extends AppCompatActivity {
     }
 
     private void getPlaces(EditText locationStart, EditText locationEnd) {
-        Places.initialize(getApplicationContext(), "AIzaSyBNvJ_WrVGRbgNudfFkqPKerjb9nfSREBc");
+        Places.initialize(getApplicationContext(), "AIzaSyCENMd7pHPxl4TgjHIzIkf1pJPJyEOezdo");
         locationStart.setFocusable(false);
         locationEnd.setFocusable(false);
 
@@ -230,7 +232,7 @@ public class Dashboard extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100 && resultCode == RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
-            noteTitle.setText(place.getAddress());
+            locationStart.setText(place.getAddress());
         } else if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
             Toast.makeText(getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
