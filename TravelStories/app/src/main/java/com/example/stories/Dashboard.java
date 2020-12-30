@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stories.models.Note;
+import com.example.stories.models.Story;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.common.api.Status;
@@ -61,9 +62,10 @@ public class Dashboard extends AppCompatActivity {
     private RecyclerView displayList;
     private List<Note> noteList;
     private SearchView searchView;
-    private EditText noteTitle;
+    private EditText storyTitle;
     private EditText locationStart;
     private EditText locationEnd;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +103,7 @@ public class Dashboard extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
         initializeComponents();
-        onAddNotes();
+        onAddStories();
         getNotesData();
     }
 
@@ -131,10 +133,10 @@ public class Dashboard extends AppCompatActivity {
         s = s.toLowerCase();
         final String userId = firebaseAuth.getCurrentUser().getUid();
 
-        Query query = firebaseFirestore.collection("notes").whereEqualTo("userId", userId).orderBy("searchKey").startAfter(s).endAt(s + "\uf8ff");
+        Query query = firebaseFirestore.collection("stories").whereEqualTo("userId", userId).orderBy("searchKey").startAfter(s).endAt(s + "\uf8ff");
 
-        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                .setQuery(query, Note.class)
+        FirestoreRecyclerOptions<Story> options = new FirestoreRecyclerOptions.Builder<Story>()
+                .setQuery(query, Story.class)
                 .build();
 
         adapter = firebaseAdapter(options, userId);
@@ -152,7 +154,7 @@ public class Dashboard extends AppCompatActivity {
         startActivity(new Intent(getApplicationContext(), Profile.class));
     }
 
-    private void onAddNotes() {
+    private void onAddStories() {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -166,28 +168,16 @@ public class Dashboard extends AppCompatActivity {
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.custom_dialog, null);
 
-        noteTitle = dialogView.findViewById(R.id.storyTitle);
+        storyTitle = dialogView.findViewById(R.id.storyTitle);
         locationStart = dialogView.findViewById(R.id.locationStart);
         locationEnd = dialogView.findViewById(R.id.locationEnd);
 
-        Places.initialize(getApplicationContext(), "AIzaSyCENMd7pHPxl4TgjHIzIkf1pJPJyEOezdo");
-        locationStart.setFocusable(false);
-        locationEnd.setFocusable(false);
+        getPlaces(locationStart, locationEnd);
 
-        locationStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                List<Place.Field> fieldList = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS);
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList).build(Dashboard.this);
-                startActivityForResult(intent, 100);
-            }
-        });
-
-
-        Button cancelNote = dialogView.findViewById(R.id.cancelStoryDialog);
+        Button cancelStory = dialogView.findViewById(R.id.cancelStoryDialog);
         Button addNote = dialogView.findViewById(R.id.addStoryDialogId);
 
-        cancelNote.setOnClickListener(new View.OnClickListener() {
+        cancelStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 dialogBuilder.dismiss();
@@ -197,12 +187,12 @@ public class Dashboard extends AppCompatActivity {
         addNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (TextUtils.isEmpty(noteTitle.getText())) {
+                if (TextUtils.isEmpty(storyTitle.getText())) {
                     Toast.makeText(Dashboard.this, "Error! A title is required", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                // onSaveNotes(new Note(noteTitle.getText().toString(), noteBody.getText().toString()));
+                onSaveStory(new Story(storyTitle.getText().toString(), locationStart.getText().toString(), locationEnd.getText().toString()));
                 dialogBuilder.dismiss();
             }
         });
@@ -225,6 +215,15 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
+        locationEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList).build(Dashboard.this);
+                startActivityForResult(intent, 200);
+            }
+        });
+
     }
 
     @Override
@@ -233,22 +232,26 @@ public class Dashboard extends AppCompatActivity {
         if (requestCode == 100 && resultCode == RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             locationStart.setText(place.getAddress());
+        } else if (requestCode == 200 && resultCode == RESULT_OK) {
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            locationEnd.setText(place.getAddress());
         } else if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
             Toast.makeText(getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void onSaveNotes(Note note) {
+
+    private void onSaveStory(Story story) {
         showProgressBar();
         final String userId = firebaseAuth.getCurrentUser().getUid();
-        note.setUserId(userId);
+        story.setUserId(userId);
 
-        CollectionReference colRef = firebaseFirestore.collection("notes");
-        colRef.add(note).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        CollectionReference colRef = firebaseFirestore.collection("stories");
+        colRef.add(story).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(Dashboard.this, "Note successfully created!", Toast.LENGTH_LONG).show();
+                Toast.makeText(Dashboard.this, "Story successfully created!", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -267,10 +270,10 @@ public class Dashboard extends AppCompatActivity {
 
         showProgressBar();
         final String userId = firebaseAuth.getCurrentUser().getUid();
-        Query query = firebaseFirestore.collection("notes").whereEqualTo("userId", userId);
+        Query query = firebaseFirestore.collection("stories").whereEqualTo("userId", userId);
 
-        FirestoreRecyclerOptions<Note> options = new FirestoreRecyclerOptions.Builder<Note>()
-                .setQuery(query, Note.class)
+        FirestoreRecyclerOptions<Story> options = new FirestoreRecyclerOptions.Builder<Story>()
+                .setQuery(query, Story.class)
                 .build();
         hideProgressBar();
 
@@ -282,10 +285,10 @@ public class Dashboard extends AppCompatActivity {
 
     }
 
-    private FirestoreRecyclerAdapter<Note, ListViewHolder> firebaseAdapter(FirestoreRecyclerOptions<Note> options, final String userId) {
+    private FirestoreRecyclerAdapter<Story, ListViewHolder> firebaseAdapter(FirestoreRecyclerOptions<Story> options, final String userId) {
 
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        return new FirestoreRecyclerAdapter<Note, ListViewHolder>(options) {
+        return new FirestoreRecyclerAdapter<Story, ListViewHolder>(options) {
             @NonNull
             @Override
             public ListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -294,12 +297,12 @@ public class Dashboard extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull ListViewHolder holder, int position, @NonNull Note note) {
-                holder.noteTitle.setText(note.getNoteTitle());
-                holder.noteDate.setText(format.format(note.getDateCreated()));
-                holder.noteBody.setText(note.getNoteBody());
-                holder.userId = userId;
-                holder.position = position;
+            protected void onBindViewHolder(@NonNull ListViewHolder holder, int position, @NonNull Story note) {
+//                holder.noteTitle.setText(note.getNoteTitle());
+//                holder.noteDate.setText(format.format(note.getDateCreated()));
+//                holder.noteBody.setText(note.getNoteBody());
+//                holder.userId = userId;
+//                holder.position = position;
             }
 
         };
