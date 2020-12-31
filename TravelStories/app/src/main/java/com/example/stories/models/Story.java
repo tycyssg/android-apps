@@ -18,7 +18,7 @@ public class Story {
     public Story(String storyTitle, String locationStart, String locationEnd) {
         this.storyTitle = storyTitle;
         this.locationStart = locationStart;
-        this.locationStart = locationEnd;
+        this.locationEnd = locationEnd;
         this.dateCreated = new Date();
         this.searchKey = locationStart.toLowerCase();
     }

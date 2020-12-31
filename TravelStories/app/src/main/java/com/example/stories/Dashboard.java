@@ -297,19 +297,20 @@ public class Dashboard extends AppCompatActivity {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull ListViewHolder holder, int position, @NonNull Story note) {
-//                holder.noteTitle.setText(note.getNoteTitle());
-//                holder.noteDate.setText(format.format(note.getDateCreated()));
-//                holder.noteBody.setText(note.getNoteBody());
-//                holder.userId = userId;
-//                holder.position = position;
+            protected void onBindViewHolder(@NonNull ListViewHolder holder, int position, @NonNull Story story) {
+                holder.noteTitle.setText(story.getStoryTitle());
+                holder.locationStartText.setText(story.getLocationStart());
+                holder.locationEndText.setText(story.getLocationEnd());
+                holder.storyDate.setText(format.format(story.getDateCreated()));
+                holder.userId = userId;
+                holder.position = position;
             }
 
         };
     }
 
-    private void getDataToDeleteNote(String userId, final int somePos) {
-        firebaseFirestore.collection("notes").whereEqualTo("userId", userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+    private void getDataToDeleteStory(String userId, final int somePos) {
+        firebaseFirestore.collection("stories").whereEqualTo("userId", userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
@@ -324,12 +325,12 @@ public class Dashboard extends AppCompatActivity {
     }
 
     private void deleteData(String documentId) {
-        firebaseFirestore.collection("notes").document(documentId)
+        firebaseFirestore.collection("stories").document(documentId)
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Toast.makeText(Dashboard.this, "Note successfully deleted!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(Dashboard.this, "Story successfully deleted!", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -353,22 +354,24 @@ public class Dashboard extends AppCompatActivity {
     }
 
     public class ListViewHolder extends RecyclerView.ViewHolder {
-        TextView noteTitle, noteDate, noteBody;
-        Button deleteNote;
+        TextView noteTitle, storyDate, locationStartText, locationEndText;
+        Button deleteStory, viewStory;
         String userId;
         int position;
 
         public ListViewHolder(@NonNull final View itemView) {
             super(itemView);
-            noteTitle = itemView.findViewById(R.id.noteTitleText);
-            noteDate = itemView.findViewById(R.id.noteDateText);
-            noteBody = itemView.findViewById(R.id.noteBodyText);
-            deleteNote = itemView.findViewById(R.id.deleteNoteId);
+            noteTitle = itemView.findViewById(R.id.storyTitleText);
+            storyDate = itemView.findViewById(R.id.storyDateText);
+            locationStartText = itemView.findViewById(R.id.locationStartText);
+            locationEndText = itemView.findViewById(R.id.locationEndText);
+            deleteStory = itemView.findViewById(R.id.deleteStoryId);
+            viewStory = itemView.findViewById(R.id.viewStoryId);
 
-            deleteNote.setOnClickListener(new View.OnClickListener() {
+            deleteStory.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getDataToDeleteNote(userId, position);
+                    getDataToDeleteStory(userId, position);
                 }
             });
         }
