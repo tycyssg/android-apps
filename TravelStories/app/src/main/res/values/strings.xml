@@ -13,5 +13,10 @@
     <string name="cancel">Cancel</string>
     <string name="shr_hint_locationStart">Location Start</string>
     <string name="shr_hint_locationEnd">Location End</string>
+    <string name="shr_hint_eventTitle">Event Title</string>
+    <string name="shr_hint_location">Location</string>
+    <string name="shr_hint_eventDescription">Event Description</string>
+    <string name="add_picture">Upload Photo</string>
+    <string name="add_event">Add Event</string>
 
 </resources>

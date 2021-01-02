@@ -1,6 +1,7 @@
 package com.example.stories.models;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ public class Story {
     private Date dateCreated;
     private String userId;
     private String searchKey;
+    private List<StoryEvent> storyEventList;
 
     public Story(String storyTitle, String locationStart, String locationEnd) {
         this.storyTitle = storyTitle;
@@ -22,4 +24,6 @@ public class Story {
         this.dateCreated = new Date();
         this.searchKey = locationStart.toLowerCase();
     }
+
+
 }

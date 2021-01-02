@@ -2,6 +2,7 @@ package com.example.stories;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,8 +24,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stories.models.Note;
 import com.example.stories.models.Story;
+import com.example.stories.models.StoryActions;
+import com.example.stories.models.StoryEvent;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.common.api.Status;
@@ -39,13 +41,19 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.Data;
 
@@ -54,17 +62,19 @@ import lombok.Data;
 public class Dashboard extends AppCompatActivity {
 
     private static final String TAG = "";
+    private static final int SELECTED = 1;
     private FirestoreRecyclerAdapter adapter;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference, imageRef;
+    private UploadTask uploadTask;
     private FloatingActionButton fab;
     private ProgressBar progressBar;
     private RecyclerView displayList;
-    private List<Note> noteList;
     private SearchView searchView;
-    private EditText storyTitle;
-    private EditText locationStart;
-    private EditText locationEnd;
+    private EditText storyTitle, eventTitle, locationStart, locationEnd, eventLocation, eventDescription;
+    private Uri uriImage;
 
 
     @Override
@@ -102,15 +112,18 @@ public class Dashboard extends AppCompatActivity {
     private void run() {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
+
         initializeComponents();
         onAddStories();
-        getNotesData();
+        getStoriesData();
     }
 
     private void initializeComponents() {
-        fab = findViewById(R.id.addNotesId);
+        fab = findViewById(R.id.addStoriesId);
         progressBar = findViewById(R.id.progressBarDashboard);
-        displayList = findViewById(R.id.notesDisplayList);
+        displayList = findViewById(R.id.storiesDisplayList);
     }
 
     private void prepareSearch() {
@@ -175,7 +188,7 @@ public class Dashboard extends AppCompatActivity {
         getPlaces(locationStart, locationEnd);
 
         Button cancelStory = dialogView.findViewById(R.id.cancelStoryDialog);
-        Button addNote = dialogView.findViewById(R.id.addStoryDialogId);
+        Button addStory = dialogView.findViewById(R.id.addStoryDialogId);
 
         cancelStory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -184,7 +197,7 @@ public class Dashboard extends AppCompatActivity {
             }
         });
 
-        addNote.setOnClickListener(new View.OnClickListener() {
+        addStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (TextUtils.isEmpty(storyTitle.getText())) {
@@ -199,6 +212,105 @@ public class Dashboard extends AppCompatActivity {
 
         dialogBuilder.setView(dialogView);
         dialogBuilder.show();
+    }
+
+    private void showEventDialog(final DocumentReference documentReference, final Story story) {
+        final AlertDialog dialogBuilder = new AlertDialog.Builder(this).create();
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.event_custom_dialog, null);
+
+        eventTitle = dialogView.findViewById(R.id.eventTitle);
+        eventLocation = dialogView.findViewById(R.id.eventLocation);
+        eventDescription = dialogView.findViewById(R.id.eventDescription);
+
+        getEventPlaces(eventLocation);
+
+        Button uploadPhoto = dialogView.findViewById(R.id.addPicture);
+        Button cancelEvent = dialogView.findViewById(R.id.cancelEventDialog);
+        Button addEvent = dialogView.findViewById(R.id.addEventDialog);
+
+        cancelEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogBuilder.dismiss();
+            }
+        });
+
+        uploadPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent photoPicker = new Intent(Intent.ACTION_PICK);
+                photoPicker.setType("image/*");
+                startActivityForResult(photoPicker, SELECTED);
+            }
+        });
+
+
+        addEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (TextUtils.isEmpty(eventTitle.getText())) {
+                    Toast.makeText(Dashboard.this, "Error! A title is required", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if (TextUtils.isEmpty(eventLocation.getText())) {
+                    Toast.makeText(Dashboard.this, "Error! A location is required", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                if (TextUtils.isEmpty(eventDescription.getText())) {
+                    Toast.makeText(Dashboard.this, "Error! A description is required", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                StoryEvent event = new StoryEvent(eventTitle.getText().toString(), eventLocation.getText().toString(), eventDescription.getText().toString());
+                uploadImage(dialogBuilder, documentReference, story, event);
+
+            }
+        });
+
+        dialogBuilder.setView(dialogView);
+        dialogBuilder.show();
+    }
+
+    private void uploadImage(final AlertDialog dialogBuilder, final DocumentReference documentReference, final Story story, final StoryEvent storyEvent) {
+        imageRef = storageReference.child("images/" + UUID.randomUUID());
+        uploadTask = imageRef.putFile(uriImage);
+
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(), "Photo Upload Fail", Toast.LENGTH_SHORT).show();
+                dialogBuilder.dismiss();
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        storyEvent.setPhotoUrl(uri.toString());
+                        List<StoryEvent> eventList = story.getStoryEventList();
+                        eventList.add(storyEvent);
+                        story.setStoryEventList(eventList);
+                        onSaveEvent(dialogBuilder, documentReference, story);
+                    }
+                });
+            }
+        });
+
+
+    }
+
+    private void onSaveEvent(final AlertDialog dialogBuilder, DocumentReference documentReference, Story story) {
+        documentReference.set(story, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Toast.makeText(getApplicationContext(), "Story successfully created!", Toast.LENGTH_LONG).show();
+                dialogBuilder.dismiss();
+            }
+        });
     }
 
     private void getPlaces(EditText locationStart, EditText locationEnd) {
@@ -226,6 +338,21 @@ public class Dashboard extends AppCompatActivity {
 
     }
 
+    private void getEventPlaces(EditText eventLocation) {
+        Places.initialize(getApplicationContext(), "AIzaSyCENMd7pHPxl4TgjHIzIkf1pJPJyEOezdo");
+        eventLocation.setFocusable(false);
+
+        eventLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList).build(Dashboard.this);
+                startActivityForResult(intent, 300);
+            }
+        });
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -235,6 +362,11 @@ public class Dashboard extends AppCompatActivity {
         } else if (requestCode == 200 && resultCode == RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
             locationEnd.setText(place.getAddress());
+        } else if (requestCode == 300 && resultCode == RESULT_OK) {
+            Place place = Autocomplete.getPlaceFromIntent(data);
+            eventLocation.setText(place.getAddress());
+        } else if (requestCode == 1 && resultCode == RESULT_OK) {
+            uriImage = data.getData();
         } else if (requestCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
             Toast.makeText(getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
@@ -266,7 +398,7 @@ public class Dashboard extends AppCompatActivity {
         progressBar.setVisibility(View.INVISIBLE);
     }
 
-    private void getNotesData() {
+    private void getStoriesData() {
 
         showProgressBar();
         final String userId = firebaseAuth.getCurrentUser().getUid();
@@ -309,7 +441,7 @@ public class Dashboard extends AppCompatActivity {
         };
     }
 
-    private void getDataToDeleteStory(String userId, final int somePos) {
+    private void getDocumentIdOfSelectedStory(String userId, final int somePos, final StoryActions storyActions) {
         firebaseFirestore.collection("stories").whereEqualTo("userId", userId).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
@@ -317,11 +449,16 @@ public class Dashboard extends AppCompatActivity {
                 for (int i = 0; i < queryDocumentSnapshots.getDocuments().size(); i++) {
                     if (i == somePos) {
                         String documentId = queryDocumentSnapshots.getDocuments().get(i).getId();
-                        deleteData(documentId);
+                        if (storyActions == StoryActions.DELETE) {
+                            deleteData(documentId);
+                        } else if (storyActions == StoryActions.VIEW) {
+                            getSpecificStoryFromList(documentId);
+                        }
                     }
                 }
             }
         });
+
     }
 
     private void deleteData(String documentId) {
@@ -353,6 +490,22 @@ public class Dashboard extends AppCompatActivity {
         adapter.startListening();
     }
 
+    public void getSpecificStoryFromList(String docId) {
+        final DocumentReference documentReference = firebaseFirestore.collection("stories").document(docId);
+        documentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                Story s = documentSnapshot.toObject(Story.class);
+                updateStory(documentReference, s);
+            }
+        });
+
+    }
+
+    public void updateStory(DocumentReference documentReference, Story story) {
+        showEventDialog(documentReference, story);
+    }
+
     public class ListViewHolder extends RecyclerView.ViewHolder {
         TextView noteTitle, storyDate, locationStartText, locationEndText;
         Button deleteStory, viewStory;
@@ -371,7 +524,14 @@ public class Dashboard extends AppCompatActivity {
             deleteStory.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getDataToDeleteStory(userId, position);
+                    getDocumentIdOfSelectedStory(userId, position, StoryActions.DELETE);
+                }
+            });
+
+            viewStory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getDocumentIdOfSelectedStory(userId, position, StoryActions.VIEW);
                 }
             });
         }
