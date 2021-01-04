@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             showSuccessMessage("User successfully created!");
                             String userId = Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid();
-                            addUserDetails(userId, new User(fullName, email, phone, "https://robohash.org/" + fullName.trim() + "?set=set3"));
+                            addUserDetails(userId, new User(fullName, email, phone, "https://robohash.org/" + fullName.trim() + "?set=set3", userId));
                             loginToRegister(registerLayout, loginLayout);
                         } else {
                             showErrorMessage("Error " + Objects.requireNonNull(task.getException()).getMessage());

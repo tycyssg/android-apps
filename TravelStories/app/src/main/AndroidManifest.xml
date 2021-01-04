@@ -11,9 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.stories.Profile" />
-        <activity android:name="com.example.stories.Dashboard" />
-        <activity android:name="com.example.stories.MainActivity">
+        <activity android:name=".ViewAllUserStories"></activity>
+        <activity android:name=".ViewAllUsers" />
+        <activity android:name=".ViewStoryActivity" />
+        <activity android:name=".Profile" />
+        <activity android:name=".Dashboard" />
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

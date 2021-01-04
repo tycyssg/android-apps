@@ -101,6 +101,9 @@ public class Dashboard extends AppCompatActivity {
             case R.id.profileId:
                 profile();
                 break;
+            case R.id.viewUsersId:
+                viewAllUsers();
+                break;
             case R.id.logOutId:
                 logout();
                 break;
@@ -165,6 +168,10 @@ public class Dashboard extends AppCompatActivity {
 
     private void profile() {
         startActivity(new Intent(getApplicationContext(), Profile.class));
+    }
+
+    private void viewAllUsers() {
+        startActivity(new Intent(getApplicationContext(), ViewAllUsers.class));
     }
 
     private void onAddStories() {
@@ -372,7 +379,6 @@ public class Dashboard extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void onSaveStory(Story story) {
         showProgressBar();
