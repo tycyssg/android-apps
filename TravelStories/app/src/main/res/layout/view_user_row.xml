@@ -68,19 +68,6 @@
                     android:padding="5dp">
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/addFriendId"
-                        style="@style/Widget.App.Button.OutlinedButton.IconOnly"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="2dp"
-                        android:layout_weight="1"
-                        android:background="@color/colorOnSecondary"
-                        android:cursorVisible="false"
-                        android:text="Add Friend"
-                        app:icon="@drawable/ic_baseline_add_24"
-                        app:iconTint="#07A9F3" />
-
-                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/viewStoriesId"
                         style="@style/Widget.App.Button.OutlinedButton.IconOnly"
                         android:layout_width="wrap_content"

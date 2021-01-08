@@ -18,5 +18,5 @@
     <string name="shr_hint_eventDescription">Event Description</string>
     <string name="add_picture">Upload Photo</string>
     <string name="add_event">Add Event</string>
-
+    <string name="map_key" translatable="false">AIzaSyCENMd7pHPxl4TgjHIzIkf1pJPJyEOezdo</string>
 </resources>

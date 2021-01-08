@@ -17,13 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.stories.models.User;
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -50,22 +46,6 @@ public class ViewAllUsers extends AppCompatActivity {
     }
 
     private void getUsersData() {
-
-        firebaseFirestore.collection("users")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                System.out.println(document.getData());
-                            }
-                        } else {
-
-                        }
-                    }
-                });
-
         Query query = firebaseFirestore.collection("users");
 
         FirestoreRecyclerOptions<User> options = new FirestoreRecyclerOptions.Builder<User>()
@@ -121,7 +101,7 @@ public class ViewAllUsers extends AppCompatActivity {
     public class ListViewHolder extends RecyclerView.ViewHolder {
         TextView viewUserFullName, viewUserPhone, userEmailId;
         ImageView userViewAvatar;
-        Button addFriendId, viewStoriesId;
+        Button viewStoriesId;
         String userId;
         int position;
 
@@ -132,17 +112,9 @@ public class ViewAllUsers extends AppCompatActivity {
             userEmailId = itemView.findViewById(R.id.userEmailId);
             userViewAvatar = itemView.findViewById(R.id.userViewAvatar);
 
-
-            addFriendId = itemView.findViewById(R.id.addFriendId);
             viewStoriesId = itemView.findViewById(R.id.viewStoriesId);
 
-//            deleteStory.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    getDocumentIdOfSelectedStory(userId, position, StoryActions.DELETE);
-//                }
-//            });
-//
+
             viewStoriesId.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

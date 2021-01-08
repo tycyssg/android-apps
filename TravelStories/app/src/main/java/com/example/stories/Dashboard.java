@@ -51,8 +51,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import lombok.Data;
@@ -75,6 +77,8 @@ public class Dashboard extends AppCompatActivity {
     private SearchView searchView;
     private EditText storyTitle, eventTitle, locationStart, locationEnd, eventLocation, eventDescription;
     private Uri uriImage;
+    private double currentEventLat;
+    private double currentEventLng;
 
 
     @Override
@@ -98,6 +102,9 @@ public class Dashboard extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         switch (id) {
+            case R.id.dashboardId:
+                dashboard();
+                break;
             case R.id.profileId:
                 profile();
                 break;
@@ -168,6 +175,10 @@ public class Dashboard extends AppCompatActivity {
 
     private void profile() {
         startActivity(new Intent(getApplicationContext(), Profile.class));
+    }
+
+    private void dashboard() {
+        startActivity(new Intent(getApplicationContext(), Dashboard.class));
     }
 
     private void viewAllUsers() {
@@ -272,6 +283,8 @@ public class Dashboard extends AppCompatActivity {
                 }
 
                 StoryEvent event = new StoryEvent(eventTitle.getText().toString(), eventLocation.getText().toString(), eventDescription.getText().toString());
+                event.setLatitude(currentEventLat);
+                event.setLongitude(currentEventLng);
                 uploadImage(dialogBuilder, documentReference, story, event);
 
             }
@@ -298,7 +311,12 @@ public class Dashboard extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         storyEvent.setPhotoUrl(uri.toString());
-                        List<StoryEvent> eventList = story.getStoryEventList();
+                        List<StoryEvent> eventList = new ArrayList<>();
+
+                        if (story.getStoryEventList() != null) {
+                            eventList = story.getStoryEventList();
+                        }
+
                         eventList.add(storyEvent);
                         story.setStoryEventList(eventList);
                         onSaveEvent(dialogBuilder, documentReference, story);
@@ -371,6 +389,8 @@ public class Dashboard extends AppCompatActivity {
             locationEnd.setText(place.getAddress());
         } else if (requestCode == 300 && resultCode == RESULT_OK) {
             Place place = Autocomplete.getPlaceFromIntent(data);
+            currentEventLat = Objects.requireNonNull(place.getLatLng()).latitude;
+            currentEventLng = place.getLatLng().longitude;
             eventLocation.setText(place.getAddress());
         } else if (requestCode == 1 && resultCode == RESULT_OK) {
             uriImage = data.getData();

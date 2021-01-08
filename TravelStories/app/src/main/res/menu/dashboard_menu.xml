@@ -9,6 +9,10 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/dashboardId"
+        android:title="Dashboard"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/profileId"

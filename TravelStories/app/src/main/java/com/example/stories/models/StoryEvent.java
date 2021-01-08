@@ -15,6 +15,8 @@ public class StoryEvent {
     private String eventDescription;
     private Date dateCreated;
     private String photoUrl;
+    private double latitude;
+    private double longitude;
 
     public StoryEvent(String eventTitle, String location, String eventDescription) {
         this.eventTitle = eventTitle;
