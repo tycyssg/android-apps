@@ -1,7 +1,10 @@
 package com.example.stories;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,6 +24,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,9 +39,9 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
     private RecyclerView eventsList;
     private FirebaseFirestore firebaseFirestore;
     private RecyclerView.Adapter adapter;
+    private FirebaseAuth firebaseAuth;
     private String selectedDocumentId;
     private GoogleMap gMap;
-    private LatLng paris = new LatLng(48.85837009999999, 2.2944813);
     private List<StoryEvent> storyEventsForMaps = new ArrayList<>();
     private TextView viewStoryTitle, startLocationValue, endLocationValue, dateCreatedValue;
 
@@ -54,6 +58,7 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
     private void run() {
         firebaseFirestore = FirebaseFirestore.getInstance();
         eventsList = findViewById(R.id.eventsList);
+        firebaseAuth = FirebaseAuth.getInstance();
 
         viewStoryTitle = findViewById(R.id.viewStoryTitle);
         startLocationValue = findViewById(R.id.startLocationValue);
@@ -74,9 +79,10 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
             gMap.addMarker(new MarkerOptions().position(new LatLng(
                     storyEvent.getLatitude(), storyEvent.getLongitude()
             )).title(storyEvent.getLocation()));
+            gMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(storyEvent.getLatitude(), storyEvent.getLongitude())));
         }
 
-        gMap.moveCamera(CameraUpdateFactory.newLatLng(paris));
+
 
     }
 
@@ -88,7 +94,7 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 Story story = documentSnapshot.toObject(Story.class);
-                viewStoryTitle.setText(story.getStoryTitle());
+                viewStoryTitle.setText(story.getStoryTitle().substring(0, 1).toUpperCase() + story.getStoryTitle().substring(1).toLowerCase());
                 startLocationValue.setText(story.getLocationStart());
                 endLocationValue.setText(story.getLocationEnd());
                 dateCreatedValue.setText(format.format(story.getDateCreated()));
@@ -108,6 +114,50 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
         eventsList.setAdapter(adapter);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.dashboardId:
+                dashboard();
+                break;
+            case R.id.profileId:
+                profile();
+                break;
+            case R.id.viewAllUsersId:
+                viewAllUsers();
+                break;
+            case R.id.logOutId:
+                logout();
+                break;
+        }
+
+        return true;
+    }
+
+    private void logout() {
+        firebaseAuth.signOut();
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
+    }
+
+    private void profile() {
+        startActivity(new Intent(getApplicationContext(), Profile.class));
+    }
+
+    private void viewAllUsers() {
+        startActivity(new Intent(getApplicationContext(), ViewAllUsers.class));
+    }
+
+    private void dashboard() {
+        startActivity(new Intent(getApplicationContext(), Dashboard.class));
+    }
 
     public static class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> {
 

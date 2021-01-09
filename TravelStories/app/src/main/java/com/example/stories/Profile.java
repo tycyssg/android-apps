@@ -173,6 +173,12 @@ public class Profile extends AppCompatActivity {
             case R.id.dashboardId:
                 dashboard();
                 break;
+            case R.id.profileId:
+                profile();
+                break;
+            case R.id.viewAllUsersId:
+                viewAllUsers();
+                break;
             case R.id.logOutId:
                 logout();
                 break;
@@ -185,6 +191,14 @@ public class Profile extends AppCompatActivity {
         firebaseAuth.signOut();
         startActivity(new Intent(getApplicationContext(), MainActivity.class));
         finish();
+    }
+
+    private void profile() {
+        startActivity(new Intent(getApplicationContext(), Profile.class));
+    }
+
+    private void viewAllUsers() {
+        startActivity(new Intent(getApplicationContext(), ViewAllUsers.class));
     }
 
     private void dashboard() {

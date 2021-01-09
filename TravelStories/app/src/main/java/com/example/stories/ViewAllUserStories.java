@@ -84,7 +84,7 @@ public class ViewAllUserStories extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull ViewAllUserStories.ListViewHolder holder, int position, @NonNull Story story) {
                 holder.documentId = getSnapshots().getSnapshot(position).getId();
-                holder.viewUserStoryTitle.setText(story.getStoryTitle());
+                holder.viewUserStoryTitle.setText(story.getStoryTitle().substring(0, 1).toUpperCase() + story.getStoryTitle().substring(1).toLowerCase());
                 holder.viewUserStoryFromDestination.setText(story.getLocationStart());
                 holder.viewUserStoryToDestination.setText(story.getLocationEnd());
                 holder.viewUserStoryDate.setText(format.format(story.getDateCreated()));

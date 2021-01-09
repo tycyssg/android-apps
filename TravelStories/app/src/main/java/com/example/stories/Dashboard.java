@@ -456,7 +456,7 @@ public class Dashboard extends AppCompatActivity {
 
             @Override
             protected void onBindViewHolder(@NonNull ListViewHolder holder, int position, @NonNull Story story) {
-                holder.noteTitle.setText(story.getStoryTitle());
+                holder.noteTitle.setText(story.getStoryTitle().substring(0, 1).toUpperCase() + story.getStoryTitle().substring(1).toLowerCase());
                 holder.locationStartText.setText(story.getLocationStart());
                 holder.locationEndText.setText(story.getLocationEnd());
                 holder.storyDate.setText(format.format(story.getDateCreated()));

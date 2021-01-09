@@ -8,6 +8,16 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/viewAllUsersId"
+        android:title="View Users"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/profileId"
+        android:title="Profile"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/logOutId"
         android:title="Log Out"
         app:showAsAction="never" />

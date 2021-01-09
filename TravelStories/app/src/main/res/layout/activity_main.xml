@@ -18,20 +18,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="205dp"
-            android:background="@drawable/bg">
-
-            <TextView
-                android:id="@+id/topText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="21dp"
-                android:layout_marginEnd="138dp"
-                android:text="NOTE"
-                android:textColor="@color/colorSecondary"
-                android:textSize="33sp"
-                android:textStyle="bold" />
+            android:background="@drawable/bg1">
 
             <TextView
                 android:id="@+id/topText2"
@@ -39,20 +26,22 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="21dp"
-                android:layout_marginEnd="30dp"
-                android:text="myidea"
-                android:textSize="33sp" />
+                android:layout_marginTop="134dp"
+                android:layout_marginEnd="77dp"
+                android:text="STORIES"
+                android:textSize="33sp"
+                android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/topText3"
+                android:id="@+id/topText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
-                android:layout_marginTop="21dp"
-                android:layout_marginEnd="10dp"
-                android:text="S"
+                android:layout_marginTop="135dp"
+                android:layout_marginEnd="219dp"
+                android:shadowColor="#000000"
+                android:text="TRAVEL"
                 android:textColor="@color/colorSecondary"
                 android:textSize="33sp"
                 android:textStyle="bold" />

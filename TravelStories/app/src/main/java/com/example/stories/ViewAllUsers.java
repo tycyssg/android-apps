@@ -3,6 +3,8 @@ package com.example.stories;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -43,6 +45,51 @@ public class ViewAllUsers extends AppCompatActivity {
         firebaseFirestore = FirebaseFirestore.getInstance();
         userList = findViewById(R.id.viewUsersLisId);
         getUsersData();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.profile_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.dashboardId:
+                dashboard();
+                break;
+            case R.id.profileId:
+                profile();
+                break;
+            case R.id.viewAllUsersId:
+                viewAllUsers();
+                break;
+            case R.id.logOutId:
+                logout();
+                break;
+        }
+
+        return true;
+    }
+
+    private void logout() {
+        firebaseAuth.signOut();
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
+    }
+
+    private void profile() {
+        startActivity(new Intent(getApplicationContext(), Profile.class));
+    }
+
+    private void viewAllUsers() {
+        startActivity(new Intent(getApplicationContext(), ViewAllUsers.class));
+    }
+
+    private void dashboard() {
+        startActivity(new Intent(getApplicationContext(), Dashboard.class));
     }
 
     private void getUsersData() {

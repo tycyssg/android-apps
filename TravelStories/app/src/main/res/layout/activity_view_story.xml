@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="1dp"
+        android:padding="3dp"
         android:paddingTop="5dp">
 
         <LinearLayout
@@ -24,7 +24,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TextView" />
+                android:autoText="false"
+                android:text="TextView"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -40,14 +43,19 @@
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
                 android:layout_weight=".5"
-                android:text="From:" />
+                android:text="From:"
+                android:textColor="#2196F3"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/startLocationValue"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -62,14 +70,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight=".5"
-                android:text="To:" />
+                android:text="To:"
+                android:textColor="#2196F3"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/endLocationValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -83,14 +96,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight=".5"
-                android:text="Date Created:" />
+                android:text="Date Created:"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/dateCreatedValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="10"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <fragment
