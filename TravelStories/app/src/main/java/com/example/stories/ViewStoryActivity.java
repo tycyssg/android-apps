@@ -9,12 +9,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.stories.models.Story;
 import com.example.stories.models.StoryEvent;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,9 +37,13 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.SneakyThrows;
 
 public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -159,13 +170,38 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
         startActivity(new Intent(getApplicationContext(), Dashboard.class));
     }
 
-    public static class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> {
+
+    public class StoryAdapter extends RecyclerView.Adapter<StoryAdapter.ViewHolder> {
 
         final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         private List<StoryEvent> storyEvents;
 
         public StoryAdapter(List<StoryEvent> storyEvents) {
             this.storyEvents = storyEvents;
+        }
+
+        public void weatherCall(StoryEvent storyEvent, final StoryAdapter.ViewHolder holder) {
+            String apiKey = "26525c7d43eabb351525420811122558";
+            String url = "https://api.openweathermap.org/data/2.5/weather?lat=" + storyEvent.getLatitude() + "&lon=" + storyEvent.getLongitude() + "&units=metric&appid=" + apiKey;
+            RequestQueue request = Volley.newRequestQueue(getApplicationContext());
+
+            JsonObjectRequest objectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                @SneakyThrows
+                @Override
+                public void onResponse(JSONObject response) {
+                    JSONObject mainObj = response.getJSONObject("main");
+                    JSONObject weatherObj = response.getJSONArray("weather").getJSONObject(0);
+                    holder.weatherDescriptionId.setText("There is " + weatherObj.getString("description"));
+                    holder.temperatureId.setText("Temp: " + mainObj.getString("temp") + "°C");
+                    holder.feelsLikeTemperatureId.setText("Fells Like: " + mainObj.getString("feels_like") + "°C");
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(ViewStoryActivity.this, error.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            request.add(objectRequest);
         }
 
         @NonNull
@@ -182,6 +218,7 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
             holder.dateRowValue.setText(format.format(storyEvents.get(position).getDateCreated()));
             holder.descriptionRow.setText(storyEvents.get(position).getEventDescription());
             Picasso.get().load(storyEvents.get(position).getPhotoUrl()).into(holder.imageRow);
+            weatherCall(storyEvents.get(position), holder);
         }
 
         @Override
@@ -190,7 +227,7 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
-            TextView titleRow, locationRowValue, dateRowValue, descriptionRow;
+            TextView titleRow, locationRowValue, dateRowValue, descriptionRow, weatherDescriptionId, temperatureId, feelsLikeTemperatureId;
             ImageView imageRow;
 
             public ViewHolder(@NonNull View itemView) {
@@ -199,6 +236,9 @@ public class ViewStoryActivity extends AppCompatActivity implements OnMapReadyCa
                 locationRowValue = itemView.findViewById(R.id.locationRowValue);
                 dateRowValue = itemView.findViewById(R.id.dateRowValue);
                 descriptionRow = itemView.findViewById(R.id.descriptionRow);
+                weatherDescriptionId = itemView.findViewById(R.id.weatherDescriptionId);
+                temperatureId = itemView.findViewById(R.id.temperatureId);
+                feelsLikeTemperatureId = itemView.findViewById(R.id.feelsLikeTemperatureId);
                 imageRow = itemView.findViewById(R.id.imageRow);
             }
         }

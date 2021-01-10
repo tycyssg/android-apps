@@ -37,9 +37,10 @@
             <TextView
                 android:id="@+id/locationRowLabel"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1.5"
-                android:text="Location:"
+                android:layout_height="wrap_content"
+                android:layout_weight=".2"
+                android:background="@drawable/ic_baseline_location_on_24"
+                android:backgroundTint="#2196F3"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -50,6 +51,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_weight="8"
                 android:text="TextView"
+                android:textColor="#2196F3"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -61,13 +63,87 @@
             android:layout_marginTop="5dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/dateRowValue"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:layout_weight=".2"
+                    android:background="@drawable/ic_baseline_event_note_24"
+                    android:backgroundTint="#F44336"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dateRowValue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="8"
+                    android:text="TextView"
+                    android:textColor="#F44336"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Current Weather"
+                    android:textColor="#E60E0503"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/weatherDescriptionId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7dp"
+                    android:text="TextView"
+                    android:textColor="#2E0B00"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/temperatureId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TextView"
+                        android:textColor="#DCAC021B"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/feelsLikeTemperatureId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="TextView"
+                        android:textColor="#DCC5031F"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/imageRow"
@@ -83,7 +159,16 @@
                 android:layout_marginTop="10dp"
                 android:text="TextView"
                 android:textColor="#151515"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:background="#000407" />
         </LinearLayout>
 
     </LinearLayout>
